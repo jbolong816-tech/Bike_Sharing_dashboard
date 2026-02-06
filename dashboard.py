@@ -47,7 +47,7 @@ weather_option = st.sidebar.selectbox(
 month_range = st.sidebar.slider(
     "Pilih Rentang Bulan",
     min_value=1,
-    max_value=12,
+    max_value=6,
     value=(1, 6)
 )
 
