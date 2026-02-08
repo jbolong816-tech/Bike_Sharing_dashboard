@@ -29,8 +29,19 @@ if df["season"].dtype != "object":
         4: "Winter"
     })
 
-# Hapus data kosong
-df = df.dropna(subset=["weathersit", "mnth", "cnt"])
+# Mapping bulan (buat kolom baru)
+month_map = {
+    1: "Januari",
+    2: "Februari",
+    3: "Maret",
+    4: "April",
+    5: "Mei",
+    6: "Juni"
+}
+df["month_name"] = df["mnth"].map(month_map)
+
+# Hapus data kosong yang relevan
+df = df.dropna(subset=["weathersit", "month_name", "cnt"])
 
 # =========================
 # SIDEBAR FILTER
@@ -43,7 +54,7 @@ weather_option = st.sidebar.selectbox(
     ["All", "Clear", "Mist", "Light Snow", "Heavy Rain"]
 )
 
-# Filter bulan (default 6 bulan)
+# Filter bulan (Januari - Juni)
 month_range = st.sidebar.slider(
     "Pilih Rentang Bulan",
     min_value=1,
@@ -65,7 +76,7 @@ if weather_option != "All":
 # TITLE
 # =========================
 st.title("🚲 Dashboard Penyewaan Sepeda")
-st.write("Dashboard ini menampilkan analisis sederhana penyewaan sepeda.")
+st.write("Dashboard ini menampilkan analisis penyewaan sepeda periode Januari–Juni 2011.")
 
 # =========================
 # METRICS
@@ -85,9 +96,14 @@ col2.metric("Rata-rata Penyewaan", f"{int(avg_rent):,}")
 # =========================
 st.subheader("Rata-rata Penyewaan Sepeda per Bulan")
 
-monthly_avg = filtered_df.groupby("mnth")["cnt"].mean()
+monthly_avg = (
+    filtered_df
+    .groupby("month_name")["cnt"]
+    .mean()
+    .reindex(["Januari", "Februari", "Maret", "April", "Mei", "Juni"])
+)
 
-if monthly_avg.empty:
+if monthly_avg.isna().all():
     st.warning("Data bulanan kosong.")
 else:
     fig1, ax1 = plt.subplots()
