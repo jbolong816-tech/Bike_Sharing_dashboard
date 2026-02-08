@@ -6,6 +6,15 @@ import streamlit as st
 # LOAD DATA
 # =========================
 df = pd.read_csv("main_data.csv")
+# =========================
+# FILTER DATA (2011 & Jan-Jun)
+# =========================
+
+# Ambil hanya tahun 2011 (yr = 0)
+df = df[df["yr"] == 0]
+
+# Ambil hanya bulan Januari - Juni
+df = df[df["mnth"].between(1, 6)]
 
 # =========================
 # PREPROCESSING
